@@ -1,0 +1,28 @@
+erDiagram
+    %% Entidade Principal de Usuários
+    USERS {
+        UUID id PK
+        VARCHAR name
+        VARCHAR email UK "Unique (Não pode repetir)"
+        VARCHAR password_hash "Senha criptografada pelo BCrypt"
+        VARCHAR role "Enum: ADMIN, MEDICO, RECEPCAO, PACIENTE"
+        BOOLEAN is_active "Controle se o usuário foi desativado"
+        TIMESTAMP created_at
+    }
+
+    %% Tabela de Funções/Cargos (ADMIN, MEDICO, RECEPCAO)
+    ROLES {
+        INT id PK
+        VARCHAR name UK "Ex: ROLE_MEDICO, ROLE_ADMIN"
+    }
+
+    %% Tabela de Relacionamento (N para N)
+    %% Um usuário pode ter mais de uma função (ex: Médico e Admin)
+    USER_ROLES {
+        UUID user_id FK
+        INT role_id FK
+    }
+
+    %% Relacionamentos
+    USERS ||--o{ USER_ROLES : "possui"
+    ROLES ||--o{ USER_ROLES : "atribuída_a"
