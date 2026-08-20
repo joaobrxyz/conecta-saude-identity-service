@@ -1,6 +1,7 @@
 package com.example.identity_service.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
 @Table(name = "users")
@@ -28,6 +30,8 @@ public class User {
 
     @Column(nullable = false)
     private String senha;
+
+    private String telefone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "tipo_user")
