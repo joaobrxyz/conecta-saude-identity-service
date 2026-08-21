@@ -2,37 +2,45 @@ package com.example.identity_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
-    public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/assets/**",
-                        "/", "/index", "/home", "/esqueci-minha-senha", "/recuperar-conta").permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            )
-            .rememberMe(rememberMe -> rememberMe
-                .key("lembrarDeMim")
-                .alwaysRemember(true)
-            )
-            .csrf(csrf -> csrf.disable());
+                // Desabilita CSRF pois o JWT já protege contra isso nativamente
+                .csrf(csrf -> csrf.disable())
+
+                // Define que a API não guardará sessão (STATELESS).
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Configuração das rotas
+                .authorizeHttpRequests(auth -> auth
+                        // Libera as rotas de autenticação (login, cadastro, refresh token) para qualquer um acessar
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/patients").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        // Qualquer outra rota do microsserviço exigirá que o usuário passe um JWT válido
+                        .anyRequest().authenticated()
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
