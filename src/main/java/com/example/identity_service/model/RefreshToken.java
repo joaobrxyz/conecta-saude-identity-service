@@ -31,4 +31,7 @@ public class RefreshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false, name = "manter_conectado")
+    private boolean manterConectado;
+
 }

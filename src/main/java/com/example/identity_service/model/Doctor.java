@@ -27,6 +27,7 @@ public class Doctor {
     @Column(unique = true, nullable = false)
     private String crm;
 
-    @Column(nullable = false)
-    private String especialidade;
+    @ManyToOne
+    @JoinColumn(name = "specialty_id", nullable = false)
+    private Specialty specialty;
 }

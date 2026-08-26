@@ -1,4 +1,4 @@
-package com.example.identity_service.service;
+package com.example.identity_service.service.token;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -46,5 +46,14 @@ public class TokenService {
 
     private Instant genExpirationDate() {
         return LocalDateTime.now().plusMinutes(15).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+    public String getRoleFromToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return JWT.require(algorithm)
+                .withIssuer("conecta-saude")
+                .build()
+                .verify(token)
+                .getClaim("role").asString();
     }
 }

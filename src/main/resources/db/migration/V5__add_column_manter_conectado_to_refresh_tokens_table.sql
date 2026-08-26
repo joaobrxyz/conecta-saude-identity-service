@@ -1,0 +1,2 @@
+ALTER TABLE refresh_tokens
+ADD COLUMN manter_conectado BOOLEAN NOT NULL DEFAULT FALSE;
