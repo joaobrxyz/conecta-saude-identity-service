@@ -1,7 +1,8 @@
 package com.example.identity_service.service;
 
-import com.example.identity_service.dto.DoctorRegisterDTO;
+import com.example.identity_service.dto.register.DoctorRegisterDTO;
 import com.example.identity_service.model.Doctor;
+import com.example.identity_service.model.Specialty;
 import com.example.identity_service.model.TipoUser;
 import com.example.identity_service.model.User;
 import com.example.identity_service.repository.DoctorRepository;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.print.Doc;
 
 @Service
 public class DoctorService {
@@ -34,21 +33,13 @@ public class DoctorService {
             throw new RuntimeException("E-mail já cadastrado no sistema.");
         }
 
-        User newUser = new User();
-        newUser.setNome(data.nome());
-        newUser.setEmail(data.email());
-        newUser.setSenha(passwordEncoder.encode(data.senha()));
-        newUser.setTipoUser(TipoUser.MEDICO);
-
+        String senhaCripto = passwordEncoder.encode(data.senha());
+        User newUser = new User(data, TipoUser.MEDICO, senhaCripto);
         userRepository.save(newUser);
 
-        Doctor newDoctor = new Doctor();
-        newDoctor.setUser(newUser);
-        newDoctor.setCrm(data.crm());
-        newDoctor.setSpecialty(
-                specialtyRepository.findById(data.especialidadeId())
-                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada")));
-
+        Specialty specialty = specialtyRepository.findById(data.especialidadeId())
+                .orElseThrow(() -> new RuntimeException("Especialidade não encontrada"));
+        Doctor newDoctor = new Doctor(newUser, data.crm(), specialty);
         doctorRepository.save(newDoctor);
     }
 }

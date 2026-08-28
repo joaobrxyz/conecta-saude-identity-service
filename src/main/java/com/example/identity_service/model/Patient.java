@@ -1,6 +1,5 @@
 package com.example.identity_service.model;
 
-import com.example.identity_service.dto.PatientRegisterDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +26,10 @@ public class Patient {
 
     @Column(unique = true, nullable = false)
     private String cpf;
+
+    public Patient(User user, String cpf) {
+        this.user = user;
+        this.cpf = cpf;
+    }
 
 }

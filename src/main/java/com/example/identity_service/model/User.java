@@ -1,14 +1,18 @@
 package com.example.identity_service.model;
 
+import com.example.identity_service.dto.register.UserAuthData;
+import com.example.identity_service.dto.register.UserRegisterDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -47,6 +51,14 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(nullable = false, updatable = false, name = "data_criacao")
     private LocalDateTime dataCriacao;
+
+    public User(UserAuthData dto, TipoUser tipoUser, String senhaCripto) {
+        this.nome = dto.nome();
+        this.email = dto.email();
+        this.senha = senhaCripto;
+        this.telefone = dto.telefone();
+        this.tipoUser = tipoUser;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

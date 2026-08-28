@@ -1,9 +1,10 @@
 package com.example.identity_service.control;
 
-import com.example.identity_service.dto.DoctorRegisterDTO;
+import com.example.identity_service.dto.register.DoctorRegisterDTO;
 import com.example.identity_service.service.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/doctors")
+@RequestMapping("/doctor")
 public class DoctorController {
 
     @Autowired
@@ -22,6 +23,6 @@ public class DoctorController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> registerDoctor(@RequestBody @Valid DoctorRegisterDTO data) {
         doctorService.registerDoctor(data);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

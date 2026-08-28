@@ -1,11 +1,11 @@
-package com.example.identity_service.dto;
+package com.example.identity_service.dto.register;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
 
-public record PatientRegisterDTO(
+public record PatientRegisterDTO (
         @NotBlank(message = "O nome é obrigatório")
         String nome,
 
@@ -22,5 +22,6 @@ public record PatientRegisterDTO(
         String cpf,
 
         @NotBlank(message = "O telefone é obrigatório")
-        String telefone) {
+        String telefone
+) implements UserAuthData {
 }

@@ -1,4 +1,4 @@
-package com.example.identity_service.dto;
+package com.example.identity_service.dto.register;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +18,9 @@ public record DoctorRegisterDTO(
         @NotBlank(message = "O CRM é obrigatório")
         String crm,
 
+        String telefone,
+
         @NotNull(message = "O ID da especialidade é obrigatório")
         Long especialidadeId
-        ) {
+) implements UserAuthData {
 }

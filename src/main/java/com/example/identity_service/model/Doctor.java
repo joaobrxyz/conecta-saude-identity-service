@@ -30,4 +30,10 @@ public class Doctor {
     @ManyToOne
     @JoinColumn(name = "specialty_id", nullable = false)
     private Specialty specialty;
+
+    public Doctor(User user, String crm, Specialty specialty) {
+        this.user = user;
+        this.crm = crm;
+        this.specialty = specialty;
+    }
 }
