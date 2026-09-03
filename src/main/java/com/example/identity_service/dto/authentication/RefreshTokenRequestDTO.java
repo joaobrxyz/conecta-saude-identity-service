@@ -1,4 +1,4 @@
-package com.example.identity_service.dto;
+package com.example.identity_service.dto.authentication;
 
 import jakarta.validation.constraints.NotBlank;
 

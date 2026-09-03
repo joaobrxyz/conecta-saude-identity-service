@@ -82,9 +82,11 @@ public class PatientService {
         return new PatientDetailDTO(patient);
     }
 
-        public void deletePatient(UUID id) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Paciente não encontrado."));
-        patient.getUser().inativar();
+    @Transactional
+    public void deletePatient(UUID id) {
+    Patient patient = patientRepository.findById(id)
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Paciente não encontrado."));
+    patient.getUser().inativar();
+    userRepository.save(patient.getUser());
     }
 }
