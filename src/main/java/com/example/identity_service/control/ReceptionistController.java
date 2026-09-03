@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("receptionist")
+@RequestMapping("receptionists")
 public class ReceptionistController {
     @Autowired
     private ReceptionistService receptionistService;

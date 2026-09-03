@@ -94,4 +94,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return this.ativo;
     }
+
+    public void inativar() {
+        this.ativo = false;
+    }
 }
