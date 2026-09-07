@@ -13,10 +13,13 @@ import com.example.identity_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,7 +56,19 @@ public class PatientService {
         return patientRepository.findAllByUserAtivoTrue(pageable).map(PatientDetailDTO::new);
     }
 
-    public PatientDetailDTO getPatientById(UUID id) {
+    public PatientDetailDTO getPatientById(UUID id) throws AccessDeniedException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isPaciente = auth.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_PACIENTE"));
+
+        if (isPaciente) {
+            String idLogado = auth.getName();
+            if (!idLogado.equals(id.toString())) {
+                throw new AccessDeniedException("Você não tem permissão para acessar este recurso.");
+            }
+        }
+
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
         return new PatientDetailDTO(patient);

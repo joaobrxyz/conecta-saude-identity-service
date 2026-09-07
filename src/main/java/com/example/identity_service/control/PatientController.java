@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
 @RestController
@@ -37,15 +38,15 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCAO', 'MEDICO')")
-    public ResponseEntity<PatientDetailDTO> getPatientById(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCAO', 'MEDICO', 'PACIENTE')")
+    public ResponseEntity<PatientDetailDTO> getPatientById(@PathVariable UUID id) throws AccessDeniedException {
         PatientDetailDTO dto = patientService.getPatientById(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("profile")
     @PreAuthorize("hasRole('PACIENTE')")
-    public ResponseEntity<PatientDetailDTO> getMyProfile(Authentication authentication) {
+    public ResponseEntity<PatientDetailDTO> getMyProfile(Authentication authentication) throws AccessDeniedException {
         UUID userId = UUID.fromString(authentication.getName());
         PatientDetailDTO dto = patientService.getPatientById(userId);
         return ResponseEntity.ok(dto);
