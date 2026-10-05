@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -180,7 +181,7 @@ class PatientServiceTest {
 
             @DisplayName("Dado um ID existente")
             @Test
-            void teste1() {
+            void teste1() throws AccessDeniedException {
                 // Dado
                 UUID id = UUID.fromString("c11f8434-1111-4a3e-aa51-bff7ce7dd111");
                 Patient patient = criarPatientValido();
