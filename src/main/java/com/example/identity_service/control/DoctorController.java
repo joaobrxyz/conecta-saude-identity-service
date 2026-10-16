@@ -19,6 +19,18 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/doctors")
 public class DoctorController {
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('MEDICO')")
+    public ResponseEntity<DoctorDetailDTO> myProfile(org.springframework.security.core.Authentication auth) {
+        return ResponseEntity.ok(doctorService.getDoctorById(UUID.fromString(auth.getName())));
+    }
+
+    @PatchMapping("/profile")
+    @PreAuthorize("hasRole('MEDICO')")
+    public ResponseEntity<DoctorDetailDTO> updateMyProfile(org.springframework.security.core.Authentication auth, @RequestBody @Valid DoctorUpdateDTO data) {
+        return ResponseEntity.ok(doctorService.updateDoctor(UUID.fromString(auth.getName()), data));
+    }
+
 
     @Autowired
     private DoctorService doctorService;

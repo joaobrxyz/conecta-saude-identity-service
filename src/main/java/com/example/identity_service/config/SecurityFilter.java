@@ -29,26 +29,19 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            var token = this.recoverToken(request);
-
-            if (token != null) {
-                var userId = tokenService.validateToken(token);
-
-                if (!userId.isEmpty()) {
-                    var role = tokenService.getRoleFromToken(token);
-                    var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-                    var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+        String token = recoverToken(request);
+        if (token != null) {
+            try {
+                String userId = tokenService.validateToken(token);
+                String role = tokenService.getRoleFromToken(token);
+                var authorities = java.util.List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userId, null, authorities));
+            } catch (RuntimeException error) {
+                response.sendError(401, "Token inválido ou expirado.");
+                return;
             }
-            filterChain.doFilter(request, response);
-        } catch (RuntimeException ex) {
-            InvalidTokenException erroCustomizado = new InvalidTokenException("Token JWT inválido ou expirado.");
-
-            exceptionResolver.resolveException(request, response, null, erroCustomizado);
         }
+        filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {

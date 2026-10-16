@@ -20,6 +20,18 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admins")
 public class AdminController {
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDetailDTO> myProfile(org.springframework.security.core.Authentication auth) {
+        return ResponseEntity.ok(adminService.getAdminById(UUID.fromString(auth.getName())));
+    }
+
+    @PatchMapping("/profile")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDetailDTO> updateMyProfile(org.springframework.security.core.Authentication auth, @RequestBody @Valid UserUpdateDTO data) {
+        return ResponseEntity.ok(adminService.updateAdmin(UUID.fromString(auth.getName()), data));
+    }
+
     @Autowired
     private AdminService adminService;
 
@@ -49,6 +61,14 @@ public class AdminController {
     public ResponseEntity<UserDetailDTO> updateAdmin(@PathVariable("id") UUID id, @RequestBody UserUpdateDTO data) {
         UserDetailDTO dto = adminService.updateAdmin(id, data);
         return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteById(@PathVariable UUID id, org.springframework.security.core.Authentication auth) {
+        if (id.toString().equals(auth.getName())) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Não é possível inativar sua própria conta por esta operação.");
+        adminService.deleteAdmin(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping()

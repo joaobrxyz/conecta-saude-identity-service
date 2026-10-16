@@ -19,6 +19,18 @@ import java.util.UUID;
 @RestController
 @RequestMapping("receptionists")
 public class ReceptionistController {
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('RECEPCAO')")
+    public ResponseEntity<UserDetailDTO> myProfile(org.springframework.security.core.Authentication auth) {
+        return ResponseEntity.ok(receptionistService.getReceptionistById(UUID.fromString(auth.getName())));
+    }
+
+    @PatchMapping("/profile")
+    @PreAuthorize("hasRole('RECEPCAO')")
+    public ResponseEntity<UserDetailDTO> updateMyProfile(org.springframework.security.core.Authentication auth, @RequestBody @Valid UserUpdateDTO data) {
+        return ResponseEntity.ok(receptionistService.updateReceptionist(UUID.fromString(auth.getName()), data));
+    }
+
     @Autowired
     private ReceptionistService receptionistService;
 

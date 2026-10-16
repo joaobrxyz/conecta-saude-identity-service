@@ -14,6 +14,16 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(java.nio.file.AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleForbidden(java.nio.file.AccessDeniedException error) {
+        return buildResponse(HttpStatus.FORBIDDEN, error.getMessage());
+    }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public org.springframework.http.ResponseEntity<?> handleStatus(org.springframework.web.server.ResponseStatusException error) {
+        return org.springframework.http.ResponseEntity.status(error.getStatusCode()).body(java.util.Map.of("message", error.getReason() == null ? "Operação indisponível." : error.getReason()));
+    }
+
 
     // Tratamento do @Valid (Campos em branco, e-mail inválido, etc)
     @ExceptionHandler(MethodArgumentNotValidException.class)

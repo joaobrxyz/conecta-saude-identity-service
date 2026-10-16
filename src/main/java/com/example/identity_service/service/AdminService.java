@@ -26,7 +26,7 @@ public class AdminService {
     @Transactional
     public void registerAdmin(UserRegisterDTO data) {
         if (userRepository.findByEmail(data.email()).isPresent()) {
-            throw new RuntimeException("E-mail já cadastrado no sistema.");
+            throw new com.example.identity_service.exception.RegraDeNegocioException("E-mail já cadastrado no sistema.");
         }
 
         String senhaCripto = passwordEncoder.encode(data.senha());
@@ -40,14 +40,14 @@ public class AdminService {
 
     public UserDetailDTO getAdminById(UUID id) {
         User admin = userRepository.findByIdAndTipoUser(id, TipoUser.ADMIN)
-                .orElseThrow(() -> new RuntimeException("Administrador não encontrado."));
+                .orElseThrow(() -> new com.example.identity_service.exception.RecursoNaoEncontradoException("Administrador não encontrado."));
         return new UserDetailDTO(admin);
     }
 
     @Transactional
     public UserDetailDTO updateAdmin(UUID id, UserUpdateDTO data) {
         User admin = userRepository.findByIdAndTipoUser(id, TipoUser.ADMIN)
-                .orElseThrow(() -> new RuntimeException("Administrador não encontrado."));
+                .orElseThrow(() -> new com.example.identity_service.exception.RecursoNaoEncontradoException("Administrador não encontrado."));
 
         if (data.nome() != null && !data.nome().isBlank()) {
             admin.setNome(data.nome());
@@ -69,7 +69,7 @@ public class AdminService {
     @Transactional
     public void deleteAdmin(UUID id) {
         User admin = userRepository.findByIdAndTipoUser(id, TipoUser.ADMIN)
-                .orElseThrow(() -> new RuntimeException("Administrador não encontrado."));
+                .orElseThrow(() -> new com.example.identity_service.exception.RecursoNaoEncontradoException("Administrador não encontrado."));
         admin.inativar();
         userRepository.save(admin);
     }

@@ -38,6 +38,13 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
 class PatientServiceTest {
+    @org.junit.jupiter.api.BeforeEach
+    void authenticate() {
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(new org.springframework.security.authentication.UsernamePasswordAuthenticationToken("staff", null, java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_ADMIN"))));
+    }
+    @org.junit.jupiter.api.AfterEach
+    void clearAuthentication() { org.springframework.security.core.context.SecurityContextHolder.clearContext(); }
+
 
     @InjectMocks
     PatientService patientService;

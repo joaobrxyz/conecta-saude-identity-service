@@ -28,6 +28,8 @@ import java.util.UUID;
 
 @Service
 public class AuthService implements UserDetailsService {
+    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:4200}")
+    private String frontendUrl;
     @Autowired
     private TokenService tokenService;
 
@@ -72,6 +74,7 @@ public class AuthService implements UserDetailsService {
         }
 
         User user = refreshToken.getUser();
+        if (!user.isEnabled()) throw new InvalidTokenException("Conta inativa.");
 
         String newAccessToken = tokenService.generateToken(user);
         String newRefreshToken = refreshTokenService.createRefreshToken(user, refreshToken.isManterConectado()).getToken();
@@ -97,7 +100,7 @@ public class AuthService implements UserDetailsService {
         String token = UUID.randomUUID().toString();
         passwordResetTokenRepository.save(new PasswordResetToken(token, user));
 
-        String link = "http://localhost:8080/auth/reset-password?token=" + token;
+        String link = frontendUrl + "/redefinir-senha?token=" + token;
 
         System.out.println("E-MAIL ENVIADO PARA: " + user.getEmail());
         System.out.println("LINK: " + link);

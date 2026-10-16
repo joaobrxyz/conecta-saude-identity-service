@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/specialties")
 public class SpecialtyController {
     @Autowired
+    private com.example.identity_service.repository.SpecialtyRepository repository;
+
+    @org.springframework.web.bind.annotation.GetMapping
+    public java.util.List<SpecialtyDetailDTO> list() {
+        return repository.findAll(org.springframework.data.domain.Sort.by("nome")).stream().map(s -> new SpecialtyDetailDTO(s.getId(), s.getNome())).toList();
+    }
+
+    @Autowired
     private SpecialtyService specialtyService;
 
     @PostMapping

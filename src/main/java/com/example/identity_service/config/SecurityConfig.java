@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 // Define que a API não guardará sessão (STATELESS).
+                .exceptionHandling(e -> e.authenticationEntryPoint((request, response, error) -> response.sendError(401)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // Configuração das rotas
